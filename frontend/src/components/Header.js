@@ -9,7 +9,7 @@ const navbarStyle = {
 const Header = ({ title }) => {
   return (
     <Navbar style={navbarStyle} variant="light">
-      <Logo style={{ maxWidth: '10rem', maxHeight: '2rem' }} />
+      <Logo alt={title} style={{ maxWidth: '10rem', maxHeight: '2rem' }} />
     </Navbar>
   );
 };
