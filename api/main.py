@@ -9,7 +9,6 @@ load_dotenv(dotenv_path="./.env.local")
 
 UNSPLASH_URL = "https://api.unsplash.com/photos/random"
 UNSPLASH_KEY = os.environ.get("UNSPLASH_KEY", "")
-print(UNSPLASH_KEY)
 
 if not UNSPLASH_KEY:
     raise EnvironmentError(
