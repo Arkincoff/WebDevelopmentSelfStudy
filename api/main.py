@@ -1,9 +1,12 @@
 # save this as app.py
 import requests
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import os
 from flask_cors import CORS
-from mongo_client import insert_test_document
+from mongo_client import mongo_client
+
+db = mongo_client.db
+images_collection = db.images
 
 
 UNSPLASH_URL = "https://api.unsplash.com/photos/random"
@@ -17,8 +20,6 @@ if not UNSPLASH_KEY:
 app = Flask(__name__)
 CORS(app)
 
-insert_test_document()
-
 @app.route("/new-image")
 def new_image():
     word = request.args.get("query")
@@ -31,6 +32,19 @@ def new_image():
     data = response.json()
     return data
 
+@app.route("/images", methods=["GET","POST"])
+def images():
+    if request.method == "GET":
+        #read images from the database
+        images = images_collection.find({})
+        return jsonify([img for img in images])
+    if request.method == "POST":
+        #save image in the database
+        image = request.get_json()
+        image["_id"] = image.get("id")
+        result = images_collection.insert_one(image)
+        inserted_id = result.inserted_id
+        return {"inserted_id": inserted_id}
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5050)
