@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './components/Header';
@@ -15,25 +15,22 @@ const App = () => {
 
   const getSavedImages = async () => {
     try {
-      const res = await axios.get(`${API_URL}/images`);
+      const res = await axios.get(API_URL + '/images');
       setImages(res.data || []);
     } catch (error) {
       console.log(error);
     }
   };
-
   useEffect(() => getSavedImages(), []);
 
   const handleSearchSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const res = await axios.get(`${API_URL}/new-image?query=${word}`);
+      const res = await axios.get(API_URL + '/new-image?query=' + word);
       setImages([{ ...res.data, title: word }, ...images]);
     } catch (error) {
       console.log(error);
     }
-
     setWord('');
   };
 
