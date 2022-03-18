@@ -1,13 +1,18 @@
 # save this as app.py
+from crypt import methods
 import requests
 from flask import Flask, request, jsonify
 import os
+import requests
+from flask import Flask, json, request, jsonify
+from dotenv import load_dotenv
 from flask_cors import CORS
 from mongo_client import mongo_client
 
 db = mongo_client.db
 images_collection = db.images
 
+load_dotenv(dotenv_path="./.env.local")
 
 UNSPLASH_URL = "https://api.unsplash.com/photos/random"
 UNSPLASH_KEY = os.environ.get("UNSPLASH_KEY", "")
@@ -45,6 +50,18 @@ def images():
         result = images_collection.insert_one(image)
         inserted_id = result.inserted_id
         return {"inserted_id": inserted_id}
+
+@app.route("/images/<image_id>", methods=["DELETE"])
+def image(image_id):
+    if request.method == "DELETE":
+        #delete image from database
+        result = images_collection.delete_one({"_id": image_id})
+        if not result:
+            return {"error": "Image wasn't deleted. Please try again"}, 500
+        if result and not result.deleted_count:
+            return {"error": "Image not found"}, 404
+        return {"deleted_id": image_id}
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5050)
